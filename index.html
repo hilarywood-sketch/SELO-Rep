@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SELO Repertoire Archive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a programme-book index — slim masthead, one search bar, two views (by work / by concert) in a single 60rem column */
+:root{
+  --bg:#f5f6f8; --surface:#ffffff; --fg:#1a2030; --muted:#5d6577; --line:#d9dde5;
+  --accent:#1f5f6b; --accent-soft:#e2eef0; --brass:#9a6b1f; --session:#7a5aa0; --session-soft:#efe9f6;
+  --danger:#a33a2c;
+  --f-display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --f-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12161f; --surface:#1a202c; --fg:#e7eaf0; --muted:#9aa3b5; --line:#2c3443;
+  --accent:#6fb8c4; --accent-soft:#1d3238; --brass:#d6a75a; --session:#b89ddb; --session-soft:#2a2238; --danger:#e07a6b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12161f; --surface:#1a202c; --fg:#e7eaf0; --muted:#9aa3b5; --line:#2c3443;
+  --accent:#6fb8c4; --accent-soft:#1d3238; --brass:#d6a75a; --session:#b89ddb; --session-soft:#2a2238; --danger:#e07a6b; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--f-body);padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:60rem;margin:0 auto}
+header.mast{padding-block:32px 20px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between}
+.eyebrow{font:500 12px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--brass);margin:0 0 8px}
+h1{font:700 clamp(30px,6vw,44px)/1.05 var(--f-display);margin:0;text-wrap:balance}
+.stats{display:flex;gap:20px;flex-wrap:wrap;font:400 13px/1.3 var(--f-mono);color:var(--muted)}
+.stats b{display:block;font:700 22px/1.1 var(--f-display);color:var(--fg)}
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px;display:grid;gap:10px;border-bottom:1px solid var(--line)}
+.searchrow{display:flex;gap:8px;flex-wrap:wrap}
+#q{flex:1 1 260px;min-width:0;font:inherit;font-size:17px;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)}
+#q:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.bar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between}
+.tabs{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.tabs button{font:600 14px var(--f-body);padding:7px 14px;border:0;background:var(--surface);color:var(--muted);cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+label.chk{display:inline-flex;gap:6px;align-items:center;font-size:14px;color:var(--muted);cursor:pointer}
+.btn{font:600 14px var(--f-body);padding:8px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:var(--bg);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.danger{border-color:var(--danger);background:transparent;color:var(--danger)}
+.btn.small{padding:4px 10px;font-size:13px}
+.result-note{font-size:14px;color:var(--muted);margin:16px 0 4px}
+.status{padding:40px 0;color:var(--muted);text-align:center}
+
+/* Works view */
+.composer{padding-block:18px 6px;border-bottom:1px solid var(--line)}
+.composer h2{font:700 22px/1.2 var(--f-display);margin:0 0 6px}
+.work{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:8px 0;align-items:baseline}
+.work + .work{border-top:1px dashed var(--line)}
+.work .t{min-width:0}
+.work .count{font:500 12px var(--f-mono);color:var(--muted);white-space:nowrap}
+.dates{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 12.5px/1 var(--f-mono);padding:5px 8px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;font-variant-numeric:tabular-nums}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip .v{font:400 12.5px/1 var(--f-body);color:var(--muted)}
+.chip.session .v{color:inherit;opacity:.85}
+.chip.session{background:var(--session-soft);border-color:transparent;color:var(--session)}
+.solo{font-size:14px;color:var(--muted)}
+
+/* Concerts view */
+.season h2{font:700 20px/1.2 var(--f-display);margin:28px 0 10px;display:flex;gap:10px;align-items:baseline}
+.season h2 small{font:400 12px var(--f-mono);color:var(--muted)}
+.concert{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px;scroll-margin-top:150px}
+.concert.flash{outline:2px solid var(--brass)}
+.chead{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;justify-content:space-between}
+.when{font:500 14px var(--f-mono);font-variant-numeric:tabular-nums}
+.where{font-size:14px;color:var(--muted)}
+.tag{font:600 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:4px 7px;border-radius:4px;background:var(--session-soft);color:var(--session)}
+.concert ol{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:4px}
+.concert li{display:grid;grid-template-columns:minmax(7rem,12rem) minmax(0,1fr);gap:12px}
+.concert li .c{font-weight:600}
+.note{margin:10px 0 0;font-size:13.5px;color:var(--brass)}
+.cfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+mark{background:var(--accent-soft);color:inherit;border-radius:2px;padding:0 1px}
+@media (max-width:520px){.concert li{grid-template-columns:1fr;gap:0}.concert li + li{margin-top:6px}}
+
+@media (prefers-reduced-motion:no-preference){.concert.flash{transition:outline-color .6s}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="mast">
+    <div>
+      <p class="eyebrow">South East London Orchestra · since 2012</p>
+      <h1>Repertoire Archive</h1>
+    </div>
+    <div class="stats" id="stats" aria-live="polite"></div>
+  </header>
+
+  <div class="controls">
+    <div class="searchrow">
+      <input id="q" type="search" placeholder="Search composer, work, soloist, venue or year" autocomplete="off" aria-label="Search the archive">
+    </div>
+    <div class="bar">
+      <div class="tabs" role="group" aria-label="View">
+        <button id="tabWorks" aria-pressed="true">By composer</button>
+        <button id="tabConcerts" aria-pressed="false">By concert</button>
+      </div>
+      <label class="chk"><input type="checkbox" id="showSessions" checked> Include 2020–21 repertoire sessions</label>
+    </div>
+  </div>
+
+  <main id="out"><p class="status">Loading the archive…</p></main>
+</div>
+
+
+<script>
+const $ = s => document.querySelector(s);
+let concerts = [], view = 'works', loaded = true;
+try { const v = localStorage.getItem('selo-view'); if (v === 'concerts') view = 'concerts'; } catch(e){}
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const fmt = d => { const [y,m,dd] = d.split('-').map(Number); return `${dd} ${MONTHS[m-1]} ${y}`; };
+const fmtLong = d => { const [y,m,dd] = d.split('-').map(Number); const w = new Date(Date.UTC(y,m-1,dd)).getUTCDay(); return `${DAYS[w]} ${dd} ${MONTHS[m-1]} ${y}`; };
+const seasonOf = d => { const [y,m] = d.split('-').map(Number); const s = m >= 8 ? y : y-1; return `${s}–${String(s+1).slice(2)}`; };
+const norm = s => (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[‘’']/g,"'").replace(/\s+/g,' ').trim();
+const shortVenue = v => v.replace(/ Church\b/g,'').replace(/^St Michael and All Angels/,'St Michael’s');
+function surnameFirst(c){
+  if (/[\/,]/.test(c)) return c;
+  const m = c.match(/^(.*?)(\s*\(.*\))?$/); const tail = m[2] || '';
+  const parts = m[1].trim().split(/\s+/); let suf = '';
+  if (parts.length > 1 && /^(II|III|Jr\.?|Sr\.?)$/.test(parts[parts.length-1])) suf = ' ' + parts.pop();
+  const sn = /vaughan williams$/.test(norm(parts.join(' '))) ? 2 : 1;
+  if (parts.length <= sn) return c;
+  return parts.slice(-sn).join(' ') + suf + ', ' + parts.slice(0,-sn).join(' ') + tail;
+}
+const esc = s => String(s??'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const COMPOUND = ['vaughan williams','saint-saens','rimsky-korsakov','coleridge-taylor','hely-hutchinson','richard rodney bennett'];
+function sortKey(comp){
+  let c = norm(comp).replace(/\(.*?\)/g,'').split(/[\/,]/)[0].trim().replace(/\b(ii|iii)\b/g,'').trim();
+  for (const k of COMPOUND) if (c.endsWith(k)) return k === 'richard rodney bennett' ? 'bennett' : k;
+  const parts = c.split(' '); return parts[parts.length-1] + ' ' + c;
+}
+function hl(text, terms){
+  let out = esc(text); if (!terms.length) return out;
+  const n = norm(text);
+  const ranges = [];
+  for (const t of terms){ let i = 0; while ((i = n.indexOf(t, i)) !== -1){ ranges.push([i, i+t.length]); i += t.length; } }
+  if (!ranges.length || n.length !== text.length) return out;
+  ranges.sort((a,b)=>a[0]-b[0]); const merged=[];
+  for (const r of ranges){ const l = merged[merged.length-1]; if (l && r[0] <= l[1]) l[1] = Math.max(l[1], r[1]); else merged.push([...r]); }
+  let res = '', p = 0;
+  for (const [a,b] of merged){ res += esc(text.slice(p,a)) + '<mark>' + esc(text.slice(a,b)) + '</mark>'; p = b; }
+  return res + esc(text.slice(p));
+}
+
+function visible(){ const s = $('#showSessions').checked; return concerts.filter(c => s || c.kind !== 'session'); }
+function terms(){ return norm($('#q').value).split(' ').filter(Boolean); }
+function hay(c, w){ return norm([w.composer, w.title, w.soloists, c.venue, c.date, seasonOf(c.date), c.conductor, c.note, c.kind==='session'?'repertoire session':''].join(' ')); }
+
+function renderStats(){
+  const v = concerts.filter(c => c.kind !== 'session');
+  const works = new Set(), comps = new Set();
+  v.forEach(c => c.works.forEach(w => { works.add(norm(w.composer)+'|'+norm(w.title)); comps.add(norm(w.composer)); }));
+  const seasons = new Set(v.map(c => seasonOf(c.date)));
+  $('#stats').innerHTML = concerts.length ? `<span><b>${v.length}</b>concerts</span><span><b>${works.size}</b>works</span><span><b>${comps.size}</b>composers</span><span><b>${seasons.size}</b>seasons</span>` : '';
+}
+
+function render(){
+  renderStats();
+  $('#tabWorks').setAttribute('aria-pressed', view==='works');
+  $('#tabConcerts').setAttribute('aria-pressed', view==='concerts');
+  const out = $('#out');
+  if (!concerts.length){ out.innerHTML = loaded ? `<p class="status">No concerts in the archive yet.</p>` : '<p class="status">Loading the archive…</p>'; return; }
+  const T = terms();
+  view === 'works' ? renderWorks(out, T) : renderConcerts(out, T);
+}
+
+function renderWorks(out, T){
+  const map = new Map();
+  for (const c of visible()) for (const w of c.works){
+    if (T.length && !T.every(t => hay(c,w).includes(t))) continue;
+    const key = norm(w.composer)+'|'+norm(w.title);
+    if (!map.has(key)) map.set(key, {composer:w.composer, title:w.title, perfs:[]});
+    map.get(key).perfs.push({c, soloists:w.soloists});
+  }
+  const byComp = new Map();
+  for (const w of map.values()){ const k = norm(w.composer); if (!byComp.has(k)) byComp.set(k, {name:w.composer, works:[]}); byComp.get(k).works.push(w); }
+  const comps = [...byComp.values()].sort((a,b)=> sortKey(a.name).localeCompare(sortKey(b.name)));
+  const nWorks = map.size;
+  let h = `<p class="result-note">${T.length ? `${nWorks} work${nWorks===1?'':'s'} match` : `${nWorks} works by ${comps.length} composers`}. Select a date to see the full programme.</p>`;
+  if (!nWorks) h += '<p class="status">Nothing matches that search. Try a surname or part of a title.</p>';
+  for (const comp of comps){
+    comp.works.sort((a,b)=> a.title.localeCompare(b.title));
+    h += `<section class="composer"><h2>${hl(surnameFirst(comp.name),T)}</h2>`;
+    for (const w of comp.works){
+      w.perfs.sort((a,b)=> a.c.date.localeCompare(b.c.date));
+      const solos = [...new Set(w.perfs.map(p=>p.soloists).filter(Boolean))];
+      h += `<div class="work"><div class="t">${hl(w.title,T)}${solos.length?` <span class="solo">· ${hl(solos.join('; '),T)}</span>`:''}</div>
+        <span class="count">${w.perfs.length}×</span>
+        <div class="dates">${w.perfs.map(p=>`<button class="chip${p.c.kind==='session'?' session':''}" data-goto="${esc(p.c.id)}" title="${p.c.kind==='session'?'Repertoire session':'Concert'}${p.c.venue?' at '+esc(p.c.venue):''}">${fmt(p.c.date)}<span class="v"> · ${p.c.venue?hl(shortVenue(p.c.venue),T):'venue not recorded'}</span></button>`).join('')}</div></div>`;
+    }
+    h += '</section>';
+  }
+  out.innerHTML = h;
+}
+
+function renderConcerts(out, T){
+  const list = visible().filter(c => !T.length || T.every(t => norm([c.venue,c.date,fmtLong(c.date),seasonOf(c.date),c.conductor,c.note,c.kind==='session'?'repertoire session':'', ...c.works.flatMap(w=>[w.composer,w.title,w.soloists])].join(' ')).includes(t)))
+    .sort((a,b)=> b.date.localeCompare(a.date));
+  let h = `<p class="result-note">${list.length} ${list.length===1?'event':'events'}${T.length?' match':''}, newest first.</p>`;
+  if (!list.length) h += '<p class="status">Nothing matches that search.</p>';
+  let cur = null;
+  for (const c of list){
+    const s = seasonOf(c.date);
+    if (s !== cur){ if (cur) h += '</section>'; cur = s; const n = list.filter(x=>seasonOf(x.date)===s).length; h += `<section class="season"><h2>${s} season <small>${n} listed</small></h2>`; }
+    h += `<article class="concert" id="${esc(c.id)}">
+      <div class="chead"><span class="when">${fmtLong(c.date)}${c.time?' · '+esc(c.time):''}</span>${c.kind==='session'?'<span class="tag">Repertoire session</span>':''}</div>
+      <div class="where">${c.venue?hl(c.venue,T):'Venue not recorded'}${c.conductor?' · Conductor: '+hl(c.conductor,T):''}</div>
+      <ol>${c.works.map(w=>`<li><span class="c">${hl(w.composer,T)}</span><span>${hl(w.title,T)}${w.soloists?` <span class="solo">· ${hl(w.soloists,T)}</span>`:''}</span></li>`).join('')}</ol>
+      ${c.note?`<p class="note">${hl(c.note,T)}</p>`:''}
+    </article>`;
+  }
+  if (cur) h += '</section>';
+  out.innerHTML = h;
+}
+
+function goTo(id){
+  $('#q').value = ''; view = 'concerts'; saveView(); render();
+  const el = document.getElementById(id);
+  if (el){ el.scrollIntoView({block:'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'), 1800); }
+}
+function saveView(){ try{ localStorage.setItem('selo-view', view); }catch(e){} }
+
+$('#q').addEventListener('input', render);
+$('#showSessions').addEventListener('change', render);
+$('#tabWorks').onclick = () => { view='works'; saveView(); render(); };
+$('#tabConcerts').onclick = () => { view='concerts'; saveView(); render(); };
+$('#out').addEventListener('click', e => {
+  const g = e.target.closest('[data-goto]'); if (g) return goTo(g.dataset.goto);
+});
+
+function fail(){
+  $('#out').innerHTML = '<p class="status">The page couldn’t read the concert data. Check that <code>concerts.js</code> is in a folder called <code>data</code> next to <code>index.html</code> (names are case-sensitive). If you’ve edited it recently, check that every concert block ends with a comma except the last one.</p>';
+}
+function start(){
+  if (!Array.isArray(window.SELO_CONCERTS) || !window.SELO_CONCERTS.length) return fail();
+  concerts = window.SELO_CONCERTS.map(c => ({...c, works: c.works || [], id: 'c' + c.date + (c.time ? '-' + c.time.replace(/[^0-9a-z]/gi,'') : '')}));
+  render();
+}
+(function load(paths){
+  const s = document.createElement('script');
+  s.src = paths[0] + '?v=' + Date.now();
+  s.onload = start;
+  s.onerror = () => paths.length > 1 ? load(paths.slice(1)) : fail();
+  document.head.appendChild(s);
+})(['data/concerts.js', 'concerts.js']);
+</script>
+</body>
+</html>
