@@ -4,18 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>SELO Repertoire Archive</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<style>
 /* Layout: a programme-book index — slim masthead, one search bar, two views (by work / by concert) in a single 60rem column */
 :root{
   --bg:#f5f6f8; --surface:#ffffff; --fg:#1a2030; --muted:#5d6577; --line:#d9dde5;
   --accent:#1f5f6b; --accent-soft:#e2eef0; --brass:#9a6b1f; --session:#7a5aa0; --session-soft:#efe9f6;
   --danger:#a33a2c;
-  --f-display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
-  --f-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
-  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+    --f-display:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --f-mono:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#12161f; --surface:#1a202c; --fg:#e7eaf0; --muted:#9aa3b5; --line:#2c3443;
@@ -87,7 +83,7 @@ mark{background:var(--accent-soft);color:inherit;border-radius:2px;padding:0 1px
 <div class="wrap">
   <header class="mast">
     <div>
-      <p class="eyebrow">South East London Orchestra · since 2012</p>
+      <p class="eyebrow">South East London Orchestra</p>
       <h1>Repertoire Archive</h1>
     </div>
     <div class="stats" id="stats" aria-live="polite"></div>
