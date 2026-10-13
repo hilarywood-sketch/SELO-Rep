@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SELO Repertoire Archive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a programme-book index — slim masthead, one search bar, two views (by work / by concert) in a single 60rem column */
+:root{
+  --bg:#f5f6f8; --surface:#ffffff; --fg:#1a2030; --muted:#5d6577; --line:#d9dde5;
+  --accent:#1f5f6b; --accent-soft:#e2eef0; --brass:#9a6b1f; --session:#7a5aa0; --session-soft:#efe9f6;
+  --danger:#a33a2c;
+  --f-display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --f-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12161f; --surface:#1a202c; --fg:#e7eaf0; --muted:#9aa3b5; --line:#2c3443;
+  --accent:#6fb8c4; --accent-soft:#1d3238; --brass:#d6a75a; --session:#b89ddb; --session-soft:#2a2238; --danger:#e07a6b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12161f; --surface:#1a202c; --fg:#e7eaf0; --muted:#9aa3b5; --line:#2c3443;
+  --accent:#6fb8c4; --accent-soft:#1d3238; --brass:#d6a75a; --session:#b89ddb; --session-soft:#2a2238; --danger:#e07a6b; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--f-body);padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:60rem;margin:0 auto}
+header.mast{padding-block:32px 20px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between}
+.eyebrow{font:500 12px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--brass);margin:0 0 8px}
+h1{font:700 clamp(30px,6vw,44px)/1.05 var(--f-display);margin:0;text-wrap:balance}
+.stats{display:flex;gap:20px;flex-wrap:wrap;font:400 13px/1.3 var(--f-mono);color:var(--muted)}
+.stats b{display:block;font:700 22px/1.1 var(--f-display);color:var(--fg)}
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px;display:grid;gap:10px;border-bottom:1px solid var(--line)}
+.searchrow{display:flex;gap:8px;flex-wrap:wrap}
+#q{flex:1 1 260px;min-width:0;font:inherit;font-size:17px;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)}
+#q:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.bar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between}
+.tabs{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.tabs button{font:600 14px var(--f-body);padding:7px 14px;border:0;background:var(--surface);color:var(--muted);cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+label.chk{display:inline-flex;gap:6px;align-items:center;font-size:14px;color:var(--muted);cursor:pointer}
+.btn{font:600 14px var(--f-body);padding:8px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:var(--bg);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.danger{border-color:var(--danger);background:transparent;color:var(--danger)}
+.btn.small{padding:4px 10px;font-size:13px}
+.result-note{font-size:14px;color:var(--muted);margin:16px 0 4px}
+.status{padding:40px 0;color:var(--muted);text-align:center}
+
+/* Works view */
+.composer{padding-block:18px 6px;border-bottom:1px solid var(--line)}
+.composer h2{font:700 22px/1.2 var(--f-display);margin:0 0 6px}
+.work{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:8px 0;align-items:baseline}
+.work + .work{border-top:1px dashed var(--line)}
+.work .t{min-width:0}
+.work .count{font:500 12px var(--f-mono);color:var(--muted);white-space:nowrap}
+.dates{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 12.5px/1 var(--f-mono);padding:5px 8px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;font-variant-numeric:tabular-nums}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip .v{font:400 12.5px/1 var(--f-body);color:var(--muted)}
+.chip.session .v{color:inherit;opacity:.85}
+.chip.session{background:var(--session-soft);border-color:transparent;color:var(--session)}
+.solo{font-size:14px;color:var(--muted)}
+
+/* Concerts view */
+.season h2{font:700 20px/1.2 var(--f-display);margin:28px 0 10px;display:flex;gap:10px;align-items:baseline}
+.season h2 small{font:400 12px var(--f-mono);color:var(--muted)}
+.concert{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px;scroll-margin-top:150px}
+.concert.flash{outline:2px solid var(--brass)}
+.chead{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;justify-content:space-between}
+.when{font:500 14px var(--f-mono);font-variant-numeric:tabular-nums}
+.where{font-size:14px;color:var(--muted)}
+.tag{font:600 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:4px 7px;border-radius:4px;background:var(--session-soft);color:var(--session)}
+.concert ol{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:4px}
+.concert li{display:grid;grid-template-columns:minmax(7rem,12rem) minmax(0,1fr);gap:12px}
+.concert li .c{font-weight:600}
+.note{margin:10px 0 0;font-size:13.5px;color:var(--brass)}
+.cfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+mark{background:var(--accent-soft);color:inherit;border-radius:2px;padding:0 1px}
+@media (max-width:520px){.concert li{grid-template-columns:1fr;gap:0}.concert li + li{margin-top:6px}}
+
+@media (prefers-reduced-motion:no-preference){.concert.flash{transition:outline-color .6s}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="mast">
+    <div>
+      <p class="eyebrow">South East London Orchestra · since 2012</p>
+      <h1>Repertoire Archive</h1>
+    </div>
+    <div class="stats" id="stats" aria-live="polite"></div>
+  </header>
+
+  <div class="controls">
+    <div class="searchrow">
+      <input id="q" type="search" placeholder="Search composer, work, soloist, venue or year" autocomplete="off" aria-label="Search the archive">
+    </div>
+    <div class="bar">
+      <div class="tabs" role="group" aria-label="View">
+        <button id="tabWorks" aria-pressed="true">By composer</button>
+        <button id="tabConcerts" aria-pressed="false">By concert</button>
+      </div>
+      <label class="chk"><input type="checkbox" id="showSessions" checked> Include 2020–21 repertoire sessions</label>
+    </div>
+  </div>
+
+  <main id="out"><p class="status">Loading the archive…</p></main>
+</div>
+
+
+<script>
+// ===== CONCERT DATA: edit below to add or correct concerts =====
+// SELO concert archive. Add new concerts anywhere in the list; the page sorts by date.
+// kind: "concert" or "session" (repertoire session). Leave unknown fields as "".
+window.SELO_CONCERTS = [
+  {"date": "2012-09-23", "time": "3.00pm", "venue": "St Edmund's Church, Beckenham", "kind": "concert", "conductor": "", "note": "Inaugural concert of South East London Orchestra",
+    "works": [
+      {"composer": "Mozart", "title": "Don Giovanni: Overture", "soloists": ""},
+      {"composer": "Weber", "title": "Clarinet Concerto No. 2 in E flat", "soloists": "Christopher Walters (clarinet)"},
+      {"composer": "Lyadov", "title": "The Enchanted Lake", "soloists": ""},
+      {"composer": "Beethoven", "title": "Symphony No. 1 in C", "soloists": ""}
+    ]},
+  {"date": "2012-11-25", "time": "4.00pm", "venue": "St Barnabas Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Mendelssohn", "title": "The Hebrides Overture", "soloists": ""},
+      {"composer": "Schubert", "title": "Symphony No. 8 in B minor, 'Unfinished'", "soloists": ""},
+      {"composer": "Dvořák", "title": "Symphony No. 7 in D minor", "soloists": ""}
+    ]},
+  {"date": "2013-02-23", "time": "4.00pm", "venue": "St Barnabas Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "R. Strauss", "title": "Serenade in E flat", "soloists": ""},
+      {"composer": "Elgar", "title": "Dream Children", "soloists": ""},
+      {"composer": "Debussy", "title": "Children's Corner", "soloists": ""},
+      {"composer": "Mendelssohn", "title": "Symphony No. 4, 'Italian'", "soloists": ""}
+    ]},
+  {"date": "2013-04-27", "time": "4.00pm", "venue": "St Barnabas Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Beethoven", "title": "Coriolan Overture", "soloists": ""},
+      {"composer": "Vaughan Williams", "title": "The Lark Ascending", "soloists": "Anna Smith (violin)"},
+      {"composer": "Boyce", "title": "Symphony No. 2 in A", "soloists": ""},
+      {"composer": "Mozart", "title": "Symphony No. 31 in D, 'Paris'", "soloists": ""}
+    ]},
+  {"date": "2013-07-06", "time": "4.00pm", "venue": "St Barnabas Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Elgar", "title": "Chanson de Matin", "soloists": ""},
+      {"composer": "Ravel", "title": "Pavane pour une infante défunte", "soloists": ""},
+      {"composer": "Elgar", "title": "Chanson de Nuit", "soloists": ""},
+      {"composer": "Bartók", "title": "Romanian Folk Dances", "soloists": ""},
+      {"composer": "Beethoven", "title": "Symphony No. 6, 'Pastoral'", "soloists": ""}
+    ]},
+  {"date": "2013-09-29", "time": "4.00pm", "venue": "St Barnabas Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Weber", "title": "Oberon Overture", "soloists": ""},
+      {"composer": "Haydn", "title": "Trumpet Concerto", "soloists": "David Quinlan (trumpet)"},
+      {"composer": "Schumann", "title": "Symphony No. 3, 'Rhenish'", "soloists": ""}
+    ]},
+  {"date": "2013-11-23", "time": "4.00pm", "venue": "", "kind": "concert", "conductor": "", "note": "Website says Sunday 23rd November 2013, but that date was a Saturday. Check which is right",
+    "works": [
+      {"composer": "Mozart", "title": "The Magic Flute: Overture", "soloists": ""},
+      {"composer": "Nielsen", "title": "Flute Concerto", "soloists": "Charlotte Bettle (flute)"},
+      {"composer": "Beethoven", "title": "Symphony No. 7 in A", "soloists": ""}
+    ]},
+  {"date": "2014-03-09", "time": "4.00pm", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Schubert", "title": "Overture in C major, 'in the Italian style'", "soloists": ""},
+      {"composer": "Lennox Berkeley", "title": "Four Poems of St Teresa of Avila", "soloists": "Sarah Denbee"},
+      {"composer": "Mendelssohn", "title": "Symphony No. 3, 'Scottish'", "soloists": ""}
+    ]},
+  {"date": "2014-05-11", "time": "4.00pm", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Beethoven", "title": "Egmont Overture", "soloists": ""},
+      {"composer": "Dvořák", "title": "Serenade in D minor, Op. 44", "soloists": ""},
+      {"composer": "Bizet", "title": "Symphony in C", "soloists": ""}
+    ]},
+  {"date": "2014-07-05", "time": "", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Vaughan Williams", "title": "The Wasps: Overture", "soloists": ""},
+      {"composer": "Bruch", "title": "Violin Concerto No. 1 in G minor", "soloists": "Fenella Humphreys (violin)"},
+      {"composer": "Vaughan Williams", "title": "Fantasia on Greensleeves", "soloists": ""},
+      {"composer": "Mozart", "title": "Symphony No. 35 in D, 'Haffner'", "soloists": ""}
+    ]},
+  {"date": "2014-09-28", "time": "", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Delibes", "title": "Le roi s'amuse: Airs de danse dans le style ancien", "soloists": ""},
+      {"composer": "Ravel", "title": "Le Tombeau de Couperin", "soloists": ""},
+      {"composer": "Barber", "title": "Adagio for Strings", "soloists": ""},
+      {"composer": "Copland", "title": "Appalachian Spring", "soloists": ""}
+    ]},
+  {"date": "2014-11-30", "time": "", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Horovitz", "title": "Fantasia on a Theme of Couperin", "soloists": ""},
+      {"composer": "Lennox Berkeley", "title": "Sinfonia Concertante", "soloists": "Victoria Small"},
+      {"composer": "Mozart", "title": "Symphony No. 41 in C, 'Jupiter'", "soloists": ""}
+    ]},
+  {"date": "2015-03-29", "time": "", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Beethoven", "title": "Fidelio Overture", "soloists": ""},
+      {"composer": "Sibelius", "title": "Violin Concerto", "soloists": "Fenella Humphreys (violin)"},
+      {"composer": "Beethoven", "title": "Symphony No. 5", "soloists": ""}
+    ]},
+  {"date": "2015-05-17", "time": "", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Rossini", "title": "L'Italiana in Algeri: Overture", "soloists": ""},
+      {"composer": "Richard Rodney Bennett", "title": "Partita", "soloists": ""},
+      {"composer": "Haydn", "title": "Symphony No. 103 in E flat, 'Drum Roll'", "soloists": ""}
+    ]},
+  {"date": "2015-07-04", "time": "", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Brahms", "title": "Tragic Overture", "soloists": ""},
+      {"composer": "Elgar", "title": "Serenade for Strings", "soloists": ""},
+      {"composer": "Saint-Saëns", "title": "Morceau de Concert", "soloists": "Natalie Church"},
+      {"composer": "Dvořák", "title": "Symphony No. 8", "soloists": ""}
+    ]},
+  {"date": "2015-10-04", "time": "", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Nielsen", "title": "Helios Overture", "soloists": ""},
+      {"composer": "Dvořák", "title": "The Noon Witch", "soloists": ""},
+      {"composer": "Elgar", "title": "Enigma Variations", "soloists": ""}
+    ]},
+  {"date": "2015-12-06", "time": "", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Schubert", "title": "Overture in D major", "soloists": ""},
+      {"composer": "Mozart", "title": "Clarinet Concerto in A", "soloists": "Felicity Vine (clarinet)"},
+      {"composer": "Boyce", "title": "Symphony No. 8 in D minor", "soloists": ""},
+      {"composer": "Haydn", "title": "Symphony No. 101 in D, 'The Clock'", "soloists": ""}
+    ]},
+  {"date": "2016-03-20", "time": "", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Mendelssohn", "title": "Calm Sea and Prosperous Voyage", "soloists": ""},
+      {"composer": "Fung Lam", "title": "In Search Of", "soloists": ""},
+      {"composer": "Dvořák", "title": "Symphony No. 9 in E minor, 'From the New World'", "soloists": ""}
+    ]},
+  {"date": "2016-05-22", "time": "4.00pm", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Mendelssohn", "title": "A Midsummer Night's Dream", "soloists": ""},
+      {"composer": "Rodrigo", "title": "Concierto de Aranjuez", "soloists": "Manus Noble (guitar)"},
+      {"composer": "Beethoven", "title": "Symphony No. 4 in B flat", "soloists": ""}
+    ]},
+  {"date": "2016-07-02", "time": "", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Smetana", "title": "Má vlast: Vltava", "soloists": ""},
+      {"composer": "Mahler", "title": "Lieder eines fahrenden Gesellen", "soloists": "Miriam Sharrad"},
+      {"composer": "Vaughan Williams", "title": "Symphony No. 5 in D", "soloists": ""}
+    ]},
+  {"date": "2016-10-09", "time": "", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Rimsky-Korsakov", "title": "The Tsar's Bride: Overture", "soloists": ""},
+      {"composer": "Lyadov", "title": "The Enchanted Lake", "soloists": ""},
+      {"composer": "Lyadov", "title": "Baba Yaga", "soloists": ""},
+      {"composer": "Tchaikovsky", "title": "Symphony No. 4 in F minor", "soloists": ""}
+    ]},
+  {"date": "2016-12-04", "time": "", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Mozart", "title": "Idomeneo Overture", "soloists": ""},
+      {"composer": "Elgar", "title": "Cello Concerto", "soloists": "Sarah Westley (cello)"},
+      {"composer": "Nielsen", "title": "Symphony No. 4, 'The Inextinguishable'", "soloists": ""}
+    ]},
+  {"date": "2017-03-26", "time": "", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Vaughan Williams", "title": "Five Variants of 'Dives and Lazarus'", "soloists": ""},
+      {"composer": "Korngold", "title": "Violin Concerto", "soloists": "Fenella Humphreys (violin)"},
+      {"composer": "Tchaikovsky", "title": "Symphony No. 6 in B minor, 'Pathétique'", "soloists": ""}
+    ]},
+  {"date": "2017-05-21", "time": "", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Smetana", "title": "The Bartered Bride: Overture", "soloists": ""},
+      {"composer": "Prokofiev", "title": "Peter and the Wolf", "soloists": "Grace Dunn (narrator)"},
+      {"composer": "Mussorgsky", "title": "Night on Bare Mountain", "soloists": ""},
+      {"composer": "Humperdinck", "title": "Hansel and Gretel: Prelude", "soloists": ""},
+      {"composer": "Grieg", "title": "Peer Gynt Suite No. 1", "soloists": ""}
+    ]},
+  {"date": "2017-07-16", "time": "", "venue": "St Barnabas Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Verdi", "title": "La forza del destino: Overture", "soloists": ""},
+      {"composer": "Mahler", "title": "Rückert-Lieder", "soloists": "Jake Muffett"},
+      {"composer": "Brahms", "title": "Symphony No. 4 in E minor", "soloists": ""}
+    ]},
+  {"date": "2017-10-16", "time": "4.00pm", "venue": "St Barnabas Church, Beckenham", "kind": "concert", "conductor": "", "note": "Website says Sunday 16th October 2017, but that date was a Monday. Check whether it was Sunday 15th",
+    "works": [
+      {"composer": "Mendelssohn", "title": "Ruy Blas: Overture", "soloists": ""},
+      {"composer": "Wagner", "title": "Siegfried Idyll", "soloists": ""},
+      {"composer": "Brahms", "title": "Symphony No. 1 in C minor", "soloists": ""}
+    ]},
+  {"date": "2017-12-03", "time": "", "venue": "St Barnabas Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Elgar", "title": "Three Bavarian Dances", "soloists": ""},
+      {"composer": "Finzi", "title": "Clarinet Concerto", "soloists": "Charlotte Woolley (clarinet)"},
+      {"composer": "Malcolm Arnold", "title": "Water Music", "soloists": ""},
+      {"composer": "Britten", "title": "Peter Grimes: Four Sea Interludes", "soloists": ""}
+    ]},
+  {"date": "2018-03-11", "time": "", "venue": "St Barnabas Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Dvořák", "title": "Carnival Overture", "soloists": ""},
+      {"composer": "Copland", "title": "Rodeo: Four Dance Episodes", "soloists": ""},
+      {"composer": "Martinů", "title": "Symphony No. 1", "soloists": ""}
+    ]},
+  {"date": "2018-05-20", "time": "", "venue": "St Barnabas Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Debussy", "title": "Prélude à l'après-midi d'un faune", "soloists": ""},
+      {"composer": "Wagner", "title": "Tristan und Isolde: Prelude and Liebestod", "soloists": ""},
+      {"composer": "Ives", "title": "The Unanswered Question", "soloists": ""},
+      {"composer": "R. Strauss", "title": "Death and Transfiguration", "soloists": ""}
+    ]},
+  {"date": "2018-07-08", "time": "4.00pm", "venue": "St Barnabas Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Bizet", "title": "Carmen Suite No. 1", "soloists": ""},
+      {"composer": "Bernstein", "title": "West Side Story: Symphonic Dances", "soloists": ""},
+      {"composer": "Shostakovich", "title": "Symphony No. 5 in D minor", "soloists": ""}
+    ]},
+  {"date": "2018-10-14", "time": "4.00pm", "venue": "St Barnabas Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Schumann", "title": "Genoveva Overture", "soloists": ""},
+      {"composer": "Tchaikovsky", "title": "Violin Concerto", "soloists": "Fenella Humphreys (violin)"},
+      {"composer": "Elgar", "title": "Froissart", "soloists": ""},
+      {"composer": "Smyth", "title": "Serenade in D", "soloists": ""}
+    ]},
+  {"date": "2018-10-18", "time": "7.30pm", "venue": "St Bartholomew's Church, Sydenham", "kind": "concert", "conductor": "", "note": "Repeat of the 14 October 2018 programme",
+    "works": [
+      {"composer": "Schumann", "title": "Genoveva Overture", "soloists": ""},
+      {"composer": "Tchaikovsky", "title": "Violin Concerto", "soloists": "Fenella Humphreys (violin)"},
+      {"composer": "Elgar", "title": "Froissart", "soloists": ""},
+      {"composer": "Smyth", "title": "Serenade in D", "soloists": ""}
+    ]},
+  {"date": "2018-12-09", "time": "4.00pm", "venue": "St Barnabas Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Leroy Anderson", "title": "A Christmas Festival", "soloists": ""},
+      {"composer": "Tchaikovsky", "title": "The Nutcracker Suite No. 1", "soloists": ""},
+      {"composer": "Rimsky-Korsakov", "title": "The Snow Maiden: Suite", "soloists": ""},
+      {"composer": "Hely-Hutchinson", "title": "A Carol Symphony", "soloists": ""},
+      {"composer": "Malcolm Arnold", "title": "The Holly and the Ivy: Fantasy on Christmas Carols", "soloists": ""}
+    ]},
+  {"date": "2019-03-17", "time": "4.00pm", "venue": "St Barnabas Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Bach/Elgar", "title": "Fantasia and Fugue in C minor", "soloists": ""},
+      {"composer": "Hindemith", "title": "Symphonic Metamorphosis on Themes of Weber", "soloists": ""},
+      {"composer": "Walton", "title": "Spitfire Prelude", "soloists": ""},
+      {"composer": "Stravinsky", "title": "The Firebird: Suite", "soloists": ""}
+    ]},
+  {"date": "2019-05-19", "time": "4.00pm", "venue": "St Barnabas Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Weber", "title": "Der Freischütz: Overture", "soloists": ""},
+      {"composer": "Mozart", "title": "Concerto for Flute and Harp", "soloists": "Jennifer Raven (flute), Federica Mossone-Evans (harp)"},
+      {"composer": "Nielsen", "title": "Symphony No. 2, 'The Four Temperaments'", "soloists": ""}
+    ]},
+  {"date": "2019-06-15", "time": "7.30pm", "venue": "St Mary's Church, Beddington", "kind": "concert", "conductor": "", "note": "In aid of St Mary's Church and Croydon Vision",
+    "works": [
+      {"composer": "Boyce", "title": "Symphony No. 4 in F", "soloists": ""},
+      {"composer": "Vivaldi", "title": "Recorder Concerto, RV 441", "soloists": "James Ridson (recorder)"},
+      {"composer": "Elgar", "title": "Serenade for Strings", "soloists": ""},
+      {"composer": "J. Strauss II", "title": "Pizzicato Polka", "soloists": ""},
+      {"composer": "Grieg", "title": "Two Elegiac Melodies", "soloists": ""},
+      {"composer": "Rutter", "title": "Suite for Strings", "soloists": ""},
+      {"composer": "Leroy Anderson", "title": "Fiddle-Faddle", "soloists": ""}
+    ]},
+  {"date": "2019-07-07", "time": "4.00pm", "venue": "St Barnabas Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Tchaikovsky", "title": "Romeo and Juliet: Fantasy Overture", "soloists": ""},
+      {"composer": "Gounod, Lehár, Puccini", "title": "Operatic arias", "soloists": "Teuta Koço (soprano)"},
+      {"composer": "Mahler", "title": "Symphony No. 4 in G", "soloists": "Teuta Koço (soprano)"}
+    ]},
+  {"date": "2019-10-13", "time": "4.00pm", "venue": "", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Brahms", "title": "Academic Festival Overture", "soloists": ""},
+      {"composer": "Sibelius", "title": "Finlandia", "soloists": ""},
+      {"composer": "Rachmaninov", "title": "Symphony No. 2", "soloists": ""}
+    ]},
+  {"date": "2019-12-08", "time": "4.00pm", "venue": "", "kind": "concert", "conductor": "", "note": "March, May and July 2020 concerts were cancelled due to Covid-19 restrictions",
+    "works": [
+      {"composer": "Sally Beamish", "title": "Reckless", "soloists": ""},
+      {"composer": "Walton", "title": "Violin Concerto", "soloists": "Fenella Humphreys (violin)"},
+      {"composer": "Prokofiev", "title": "Romeo and Juliet (selection)", "soloists": ""}
+    ]},
+  {"date": "2020-10-11", "time": "", "venue": "St Michael and All Angels Church, Beckenham", "kind": "session", "conductor": "", "note": "Covid-era repertoire session",
+    "works": [
+      {"composer": "Mozart", "title": "The Marriage of Figaro: Overture", "soloists": ""},
+      {"composer": "Beethoven", "title": "Leonore Overture No. 3", "soloists": ""}
+    ]},
+  {"date": "2020-12-13", "time": "", "venue": "St Michael and All Angels Church, Beckenham", "kind": "session", "conductor": "", "note": "Covid-era repertoire session",
+    "works": [
+      {"composer": "Mozart", "title": "Piano Concerto No. 20 in D minor, K. 466", "soloists": "Mike Bradburn (piano)"},
+      {"composer": "Coleridge-Taylor", "title": "Christmas Overture", "soloists": ""}
+    ]},
+  {"date": "2021-06-06", "time": "", "venue": "St Michael and All Angels Church, Beckenham", "kind": "session", "conductor": "", "note": "Covid-era repertoire session",
+    "works": [
+      {"composer": "Schumann", "title": "Symphony No. 2 in C, Op. 61 (movements 1 and 2)", "soloists": ""},
+      {"composer": "Butterworth", "title": "The Banks of Green Willow", "soloists": ""}
+    ]},
+  {"date": "2021-06-20", "time": "", "venue": "St Michael and All Angels Church, Beckenham", "kind": "session", "conductor": "", "note": "Covid-era repertoire session",
+    "works": [
+      {"composer": "Schumann", "title": "Symphony No. 2 in C, Op. 61 (movements 3 and 4)", "soloists": ""},
+      {"composer": "Mendelssohn", "title": "Violin Concerto in E minor, Op. 64", "soloists": "Fenella Humphreys (violin)"}
+    ]},
+  {"date": "2021-07-04", "time": "", "venue": "St Michael and All Angels Church, Beckenham", "kind": "session", "conductor": "", "note": "Covid-era repertoire session",
+    "works": [
+      {"composer": "Schumann", "title": "Symphony No. 2 in C, Op. 61 (movements 1 and 3)", "soloists": ""}
+    ]},
+  {"date": "2021-10-24", "time": "4.00pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "David Smith", "note": "",
+    "works": [
+      {"composer": "Brahms", "title": "Variations on a Theme of Haydn", "soloists": ""},
+      {"composer": "Dvořák", "title": "Cello Concerto", "soloists": "Yoanna Prodanova (cello)"}
+    ]},
+  {"date": "2022-04-10", "time": "4.00pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "David Smith", "note": "",
+    "works": [
+      {"composer": "Mahler", "title": "Blumine", "soloists": ""},
+      {"composer": "Berg", "title": "Seven Early Songs", "soloists": "Jessica Gillingwater (mezzo-soprano)"},
+      {"composer": "Brahms", "title": "Symphony No. 3", "soloists": ""}
+    ]},
+  {"date": "2022-06-26", "time": "4.00pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "David Smith", "note": "",
+    "works": [
+      {"composer": "Hannah Kendall", "title": "The Spark Catchers", "soloists": ""},
+      {"composer": "Britten/Matthews", "title": "Movements for a Clarinet Concerto", "soloists": "Nicholas Shipman (clarinet)"},
+      {"composer": "Shostakovich", "title": "Symphony No. 9", "soloists": ""}
+    ]},
+  {"date": "2022-10-09", "time": "4.00pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "David Smith", "note": "",
+    "works": [
+      {"composer": "Coleridge-Taylor", "title": "The Bamboula: Rhapsodic Dance", "soloists": ""},
+      {"composer": "Dvořák", "title": "Slavonic Dance, Op. 72 No. 2", "soloists": ""},
+      {"composer": "Sibelius", "title": "Karelia Suite", "soloists": ""},
+      {"composer": "Amy Beach", "title": "Symphony in E minor, 'Gaelic'", "soloists": ""}
+    ]},
+  {"date": "2022-11-26", "time": "4.00pm", "venue": "All Saints Church, West Dulwich", "kind": "concert", "conductor": "David Smith", "note": "",
+    "works": [
+      {"composer": "Smyth", "title": "The Wreckers: Overture", "soloists": ""},
+      {"composer": "Debussy", "title": "La Mer", "soloists": ""},
+      {"composer": "Elgar", "title": "Symphony No. 1 in A flat", "soloists": ""}
+    ]},
+  {"date": "2023-03-26", "time": "4.00pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Glinka", "title": "Ruslan and Lyudmila: Overture", "soloists": ""},
+      {"composer": "Schumann", "title": "Scenes from Goethe's Faust: Overture", "soloists": ""},
+      {"composer": "Liszt", "title": "Hamlet", "soloists": ""},
+      {"composer": "Brahms", "title": "Symphony No. 2 in D", "soloists": ""}
+    ]},
+  {"date": "2023-05-21", "time": "4.00pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Beethoven", "title": "Violin Concerto in D", "soloists": "Charlie Lovell-Jones (violin)"},
+      {"composer": "Bach", "title": "Violin Sonata No. 1 in G minor: Adagio (encore)", "soloists": "Charlie Lovell-Jones (violin)"},
+      {"composer": "Dvořák", "title": "Symphony No. 7 in D minor", "soloists": ""}
+    ]},
+  {"date": "2023-07-22", "time": "4.00pm", "venue": "All Saints Church, West Dulwich", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Kabalevsky", "title": "Colas Breugnon: Overture", "soloists": ""},
+      {"composer": "Mussorgsky", "title": "Khovanshchina: Prelude and Dance of the Persian Slaves", "soloists": ""},
+      {"composer": "Shostakovich", "title": "Symphony No. 10 in E minor", "soloists": ""}
+    ]},
+  {"date": "2023-10-15", "time": "4.30pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Borodin", "title": "Prince Igor: Overture", "soloists": ""},
+      {"composer": "Weber", "title": "Bassoon Concerto", "soloists": "James Fisher (bassoon)"},
+      {"composer": "Sibelius", "title": "Symphony No. 2", "soloists": ""}
+    ]},
+  {"date": "2023-12-10", "time": "4.00pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Coleridge-Taylor", "title": "Christmas Overture", "soloists": ""},
+      {"composer": "Herbert Chappell", "title": "Paddington Bear's First Concert", "soloists": "Chris Jeffery (narrator)"},
+      {"composer": "J. Strauss II", "title": "On the Beautiful Blue Danube", "soloists": ""},
+      {"composer": "Ponchielli", "title": "Il Convegno", "soloists": "Charlotte Woolley, Phil Broadey (clarinets)"},
+      {"composer": "Bryan Kelly", "title": "Improvisations on Christmas Carols", "soloists": ""}
+    ]},
+  {"date": "2024-03-24", "time": "4.30pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Holst", "title": "A Somerset Rhapsody", "soloists": ""},
+      {"composer": "Khachaturian", "title": "Masquerade Suite", "soloists": ""},
+      {"composer": "Roxanna Panufnik", "title": "Great Dickens!", "soloists": ""},
+      {"composer": "Hindemith", "title": "Mathis der Maler", "soloists": ""}
+    ]},
+  {"date": "2024-05-25", "time": "4.00pm", "venue": "All Saints Church, West Dulwich", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Wagner", "title": "Die Meistersinger von Nürnberg: Prelude", "soloists": ""},
+      {"composer": "Delibes", "title": "Sylvia: Suite", "soloists": ""},
+      {"composer": "Glazunov", "title": "Symphony No. 5", "soloists": ""}
+    ]},
+  {"date": "2024-07-07", "time": "4.00pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Verdi", "title": "Nabucco: Overture", "soloists": ""},
+      {"composer": "Berlioz", "title": "Les nuits d'été", "soloists": "Jessica Gillingwater (mezzo-soprano)"},
+      {"composer": "Wolf", "title": "Italian Serenade", "soloists": ""},
+      {"composer": "Puccini", "title": "Crisantemi", "soloists": ""},
+      {"composer": "Elgar", "title": "In the South (Alassio)", "soloists": ""}
+    ]},
+  {"date": "2024-10-12", "time": "4.00pm", "venue": "All Saints Church, West Dulwich", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Sibelius", "title": "Pohjola's Daughter", "soloists": ""},
+      {"composer": "Grace Williams", "title": "Rhiannon", "soloists": ""},
+      {"composer": "Rimsky-Korsakov", "title": "Scheherazade", "soloists": ""}
+    ]},
+  {"date": "2024-12-01", "time": "4.30pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Brahms", "title": "Violin Concerto in D", "soloists": "Charlie Lovell-Jones (violin)"},
+      {"composer": "Dvořák", "title": "Symphony No. 8", "soloists": ""}
+    ]},
+  {"date": "2025-02-09", "time": "4.30pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Louise Farrenc", "title": "Overture No. 1", "soloists": ""},
+      {"composer": "Schubert", "title": "Symphony No. 8 in B minor, 'Unfinished'", "soloists": ""},
+      {"composer": "Smetana", "title": "The Bartered Bride: Overture", "soloists": ""},
+      {"composer": "Beethoven", "title": "Symphony No. 8 in F", "soloists": ""}
+    ]},
+  {"date": "2025-03-30", "time": "4.30pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Doreen Carwithen", "title": "Overture: The Men of Sherwood Forest", "soloists": ""},
+      {"composer": "John Williams", "title": "Star Wars: Suite", "soloists": ""},
+      {"composer": "Ruth Gipps", "title": "Symphony No. 4", "soloists": ""}
+    ]},
+  {"date": "2025-06-14", "time": "4.00pm", "venue": "All Saints Church, West Dulwich", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Sibelius", "title": "Andante Festivo", "soloists": ""},
+      {"composer": "Grieg", "title": "Piano Concerto in A minor", "soloists": "Juanjo Blázquez (piano)"},
+      {"composer": "Tchaikovsky", "title": "Symphony No. 5 in E minor", "soloists": ""}
+    ]},
+  {"date": "2025-10-11", "time": "4.00pm", "venue": "All Saints Church, West Dulwich", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Zimmer", "title": "Gladiator", "soloists": ""},
+      {"composer": "Shostakovich", "title": "Suite for Variety Orchestra No. 1", "soloists": ""},
+      {"composer": "Walton", "title": "Henry V: Suite", "soloists": ""},
+      {"composer": "Badelt", "title": "Pirates of the Caribbean", "soloists": ""},
+      {"composer": "John Williams", "title": "Jurassic Park", "soloists": ""},
+      {"composer": "Silvestri", "title": "Back to the Future", "soloists": ""}
+    ]},
+  {"date": "2025-12-07", "time": "4.30pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Borodin", "title": "Prince Igor: Polovtsian Dances", "soloists": ""},
+      {"composer": "Kabalevsky", "title": "Cello Concerto No. 2", "soloists": "Yoanna Prodanova (cello)"},
+      {"composer": "Mussorgsky (orch. Ravel)", "title": "Pictures at an Exhibition", "soloists": ""}
+    ]},
+  {"date": "2026-03-22", "time": "4.30pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "MacCunn", "title": "The Land of the Mountain and the Flood", "soloists": ""},
+      {"composer": "Thea Musgrave", "title": "Loch Ness", "soloists": ""},
+      {"composer": "Malcolm Arnold", "title": "Four Scottish Dances", "soloists": ""},
+      {"composer": "Bruch", "title": "Scottish Fantasy", "soloists": "Fenella Humphreys (violin)"}
+    ]},
+  {"date": "2026-05-17", "time": "4.30pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "", "note": "",
+    "works": [
+      {"composer": "Adrian Sutton", "title": "A Fist Full of Fives", "soloists": ""},
+      {"composer": "Haydn", "title": "Symphony No. 55", "soloists": ""},
+      {"composer": "Beethoven", "title": "Symphony No. 5", "soloists": ""}
+    ]},
+  {"date": "2026-07-04", "time": "4.00pm", "venue": "All Saints Church, West Dulwich", "kind": "concert", "conductor": "", "note": "With LCC",
+    "works": [
+      {"composer": "Elgar", "title": "The Music Makers", "soloists": "Jessica Gillingwater (mezzo-soprano)"},
+      {"composer": "Vaughan Williams", "title": "A London Symphony", "soloists": ""}
+    ]}
+];
+// ===== END OF CONCERT DATA =====
+</script>
+<script>
+const $ = s => document.querySelector(s);
+let concerts = [], view = 'works', loaded = true;
+try { const v = localStorage.getItem('selo-view'); if (v === 'concerts') view = 'concerts'; } catch(e){}
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const fmt = d => { const [y,m,dd] = d.split('-').map(Number); return `${dd} ${MONTHS[m-1]} ${y}`; };
+const fmtLong = d => { const [y,m,dd] = d.split('-').map(Number); const w = new Date(Date.UTC(y,m-1,dd)).getUTCDay(); return `${DAYS[w]} ${dd} ${MONTHS[m-1]} ${y}`; };
+const seasonOf = d => { const [y,m] = d.split('-').map(Number); const s = m >= 8 ? y : y-1; return `${s}–${String(s+1).slice(2)}`; };
+const norm = s => (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[‘’']/g,"'").replace(/\s+/g,' ').trim();
+const shortVenue = v => v.replace(/ Church\b/g,'').replace(/^St Michael and All Angels/,'St Michael’s');
+function surnameFirst(c){
+  if (/[\/,]/.test(c)) return c;
+  const m = c.match(/^(.*?)(\s*\(.*\))?$/); const tail = m[2] || '';
+  const parts = m[1].trim().split(/\s+/); let suf = '';
+  if (parts.length > 1 && /^(II|III|Jr\.?|Sr\.?)$/.test(parts[parts.length-1])) suf = ' ' + parts.pop();
+  const sn = /vaughan williams$/.test(norm(parts.join(' '))) ? 2 : 1;
+  if (parts.length <= sn) return c;
+  return parts.slice(-sn).join(' ') + suf + ', ' + parts.slice(0,-sn).join(' ') + tail;
+}
+const esc = s => String(s??'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const COMPOUND = ['vaughan williams','saint-saens','rimsky-korsakov','coleridge-taylor','hely-hutchinson','richard rodney bennett'];
+function sortKey(comp){
+  let c = norm(comp).replace(/\(.*?\)/g,'').split(/[\/,]/)[0].trim().replace(/\b(ii|iii)\b/g,'').trim();
+  for (const k of COMPOUND) if (c.endsWith(k)) return k === 'richard rodney bennett' ? 'bennett' : k;
+  const parts = c.split(' '); return parts[parts.length-1] + ' ' + c;
+}
+function hl(text, terms){
+  let out = esc(text); if (!terms.length) return out;
+  const n = norm(text);
+  const ranges = [];
+  for (const t of terms){ let i = 0; while ((i = n.indexOf(t, i)) !== -1){ ranges.push([i, i+t.length]); i += t.length; } }
+  if (!ranges.length || n.length !== text.length) return out;
+  ranges.sort((a,b)=>a[0]-b[0]); const merged=[];
+  for (const r of ranges){ const l = merged[merged.length-1]; if (l && r[0] <= l[1]) l[1] = Math.max(l[1], r[1]); else merged.push([...r]); }
+  let res = '', p = 0;
+  for (const [a,b] of merged){ res += esc(text.slice(p,a)) + '<mark>' + esc(text.slice(a,b)) + '</mark>'; p = b; }
+  return res + esc(text.slice(p));
+}
+
+function visible(){ const s = $('#showSessions').checked; return concerts.filter(c => s || c.kind !== 'session'); }
+function terms(){ return norm($('#q').value).split(' ').filter(Boolean); }
+function hay(c, w){ return norm([w.composer, w.title, w.soloists, c.venue, c.date, seasonOf(c.date), c.conductor, c.note, c.kind==='session'?'repertoire session':''].join(' ')); }
+
+function renderStats(){
+  const v = concerts.filter(c => c.kind !== 'session');
+  const works = new Set(), comps = new Set();
+  v.forEach(c => c.works.forEach(w => { works.add(norm(w.composer)+'|'+norm(w.title)); comps.add(norm(w.composer)); }));
+  const seasons = new Set(v.map(c => seasonOf(c.date)));
+  $('#stats').innerHTML = concerts.length ? `<span><b>${v.length}</b>concerts</span><span><b>${works.size}</b>works</span><span><b>${comps.size}</b>composers</span><span><b>${seasons.size}</b>seasons</span>` : '';
+}
+
+function render(){
+  renderStats();
+  $('#tabWorks').setAttribute('aria-pressed', view==='works');
+  $('#tabConcerts').setAttribute('aria-pressed', view==='concerts');
+  const out = $('#out');
+  if (!concerts.length){ out.innerHTML = loaded ? `<p class="status">No concerts in the archive yet.</p>` : '<p class="status">Loading the archive…</p>'; return; }
+  const T = terms();
+  view === 'works' ? renderWorks(out, T) : renderConcerts(out, T);
+}
+
+function renderWorks(out, T){
+  const map = new Map();
+  for (const c of visible()) for (const w of c.works){
+    if (T.length && !T.every(t => hay(c,w).includes(t))) continue;
+    const key = norm(w.composer)+'|'+norm(w.title);
+    if (!map.has(key)) map.set(key, {composer:w.composer, title:w.title, perfs:[]});
+    map.get(key).perfs.push({c, soloists:w.soloists});
+  }
+  const byComp = new Map();
+  for (const w of map.values()){ const k = norm(w.composer); if (!byComp.has(k)) byComp.set(k, {name:w.composer, works:[]}); byComp.get(k).works.push(w); }
+  const comps = [...byComp.values()].sort((a,b)=> sortKey(a.name).localeCompare(sortKey(b.name)));
+  const nWorks = map.size;
+  let h = `<p class="result-note">${T.length ? `${nWorks} work${nWorks===1?'':'s'} match` : `${nWorks} works by ${comps.length} composers`}. Select a date to see the full programme.</p>`;
+  if (!nWorks) h += '<p class="status">Nothing matches that search. Try a surname or part of a title.</p>';
+  for (const comp of comps){
+    comp.works.sort((a,b)=> a.title.localeCompare(b.title));
+    h += `<section class="composer"><h2>${hl(surnameFirst(comp.name),T)}</h2>`;
+    for (const w of comp.works){
+      w.perfs.sort((a,b)=> a.c.date.localeCompare(b.c.date));
+      const solos = [...new Set(w.perfs.map(p=>p.soloists).filter(Boolean))];
+      h += `<div class="work"><div class="t">${hl(w.title,T)}${solos.length?` <span class="solo">· ${hl(solos.join('; '),T)}</span>`:''}</div>
+        <span class="count">${w.perfs.length}×</span>
+        <div class="dates">${w.perfs.map(p=>`<button class="chip${p.c.kind==='session'?' session':''}" data-goto="${esc(p.c.id)}" title="${p.c.kind==='session'?'Repertoire session':'Concert'}${p.c.venue?' at '+esc(p.c.venue):''}">${fmt(p.c.date)}<span class="v"> · ${p.c.venue?hl(shortVenue(p.c.venue),T):'venue not recorded'}</span></button>`).join('')}</div></div>`;
+    }
+    h += '</section>';
+  }
+  out.innerHTML = h;
+}
+
+function renderConcerts(out, T){
+  const list = visible().filter(c => !T.length || T.every(t => norm([c.venue,c.date,fmtLong(c.date),seasonOf(c.date),c.conductor,c.note,c.kind==='session'?'repertoire session':'', ...c.works.flatMap(w=>[w.composer,w.title,w.soloists])].join(' ')).includes(t)))
+    .sort((a,b)=> b.date.localeCompare(a.date));
+  let h = `<p class="result-note">${list.length} ${list.length===1?'event':'events'}${T.length?' match':''}, newest first.</p>`;
+  if (!list.length) h += '<p class="status">Nothing matches that search.</p>';
+  let cur = null;
+  for (const c of list){
+    const s = seasonOf(c.date);
+    if (s !== cur){ if (cur) h += '</section>'; cur = s; const n = list.filter(x=>seasonOf(x.date)===s).length; h += `<section class="season"><h2>${s} season <small>${n} listed</small></h2>`; }
+    h += `<article class="concert" id="${esc(c.id)}">
+      <div class="chead"><span class="when">${fmtLong(c.date)}${c.time?' · '+esc(c.time):''}</span>${c.kind==='session'?'<span class="tag">Repertoire session</span>':''}</div>
+      <div class="where">${c.venue?hl(c.venue,T):'Venue not recorded'}${c.conductor?' · Conductor: '+hl(c.conductor,T):''}</div>
+      <ol>${c.works.map(w=>`<li><span class="c">${hl(w.composer,T)}</span><span>${hl(w.title,T)}${w.soloists?` <span class="solo">· ${hl(w.soloists,T)}</span>`:''}</span></li>`).join('')}</ol>
+      ${c.note?`<p class="note">${hl(c.note,T)}</p>`:''}
+    </article>`;
+  }
+  if (cur) h += '</section>';
+  out.innerHTML = h;
+}
+
+function goTo(id){
+  $('#q').value = ''; view = 'concerts'; saveView(); render();
+  const el = document.getElementById(id);
+  if (el){ el.scrollIntoView({block:'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'), 1800); }
+}
+function saveView(){ try{ localStorage.setItem('selo-view', view); }catch(e){} }
+
+$('#q').addEventListener('input', render);
+$('#showSessions').addEventListener('change', render);
+$('#tabWorks').onclick = () => { view='works'; saveView(); render(); };
+$('#tabConcerts').onclick = () => { view='concerts'; saveView(); render(); };
+$('#out').addEventListener('click', e => {
+  const g = e.target.closest('[data-goto]'); if (g) return goTo(g.dataset.goto);
+});
+
+function fail(){
+  $('#out').innerHTML = '<p class="status">The page couldn’t read the concert data. If you’ve edited the concert data in <code>index.html</code> recently, check that every concert block ends with a comma except the last one.</p>';
+}
+function start(){
+  if (!Array.isArray(window.SELO_CONCERTS) || !window.SELO_CONCERTS.length) return fail();
+  concerts = window.SELO_CONCERTS.map(c => ({...c, works: c.works || [], id: 'c' + c.date + (c.time ? '-' + c.time.replace(/[^0-9a-z]/gi,'') : '')}));
+  render();
+}
+start();
+</script>
+</body>
+</html>
