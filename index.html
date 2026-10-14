@@ -10,7 +10,7 @@
   --bg:#f5f6f8; --surface:#ffffff; --fg:#1a2030; --muted:#5d6577; --line:#d9dde5;
   --accent:#1f5f6b; --accent-soft:#e2eef0; --brass:#9a6b1f; --session:#7a5aa0; --session-soft:#efe9f6;
   --danger:#a33a2c;
-    --f-display:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --f-display:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   --f-body:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   --f-mono:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 }
@@ -99,7 +99,7 @@ mark{background:var(--accent-soft);color:inherit;border-radius:2px;padding:0 1px
         <button id="tabWorks" aria-pressed="true">By composer</button>
         <button id="tabConcerts" aria-pressed="false">By concert</button>
       </div>
-      <label class="chk"><input type="checkbox" id="showSessions" checked> Include 2020–21 repertoire sessions</label>
+      <label class="chk"><input type="checkbox" id="showSessions" checked> Include repertoire sessions</label>
     </div>
   </div>
 
@@ -110,7 +110,7 @@ mark{background:var(--accent-soft);color:inherit;border-radius:2px;padding:0 1px
 <script>
 // ===== CONCERT DATA: edit below to add or correct concerts =====
 // SELO concert archive. Add new concerts anywhere in the list; the page sorts by date.
-// kind: "concert" or "session" (repertoire session). Leave unknown fields as "".
+// kind: "concert" or "session" (repertoire session or evening). Leave unknown fields as "".
 window.SELO_CONCERTS = [
   {"date": "2012-09-23", "time": "3.00pm", "venue": "St Edmund's Church, Beckenham", "kind": "concert", "conductor": "David Smith", "note": "Inaugural concert of South East London Orchestra",
     "works": [
@@ -357,6 +357,11 @@ window.SELO_CONCERTS = [
       {"composer": "Gounod, Lehár, Puccini", "title": "Operatic arias", "soloists": "Teuta Koço (soprano)"},
       {"composer": "Mahler", "title": "Symphony No. 4 in G", "soloists": "Teuta Koço (soprano)"}
     ]},
+  {"date": "2019-08-17", "time": "10.00am", "venue": "St James' Church, Beckenham", "kind": "session", "conductor": "", "note": "Repertoire day, 10am to 6pm",
+    "works": [
+      {"composer": "Mahler", "title": "Symphony No. 2 in C minor (1st movement)", "soloists": ""},
+      {"composer": "Holst", "title": "A Somerset Rhapsody", "soloists": ""}
+    ]},
   {"date": "2019-10-13", "time": "4.00pm", "venue": "", "kind": "concert", "conductor": "David Smith", "note": "",
     "works": [
       {"composer": "Brahms", "title": "Academic Festival Overture", "soloists": ""},
@@ -369,6 +374,15 @@ window.SELO_CONCERTS = [
       {"composer": "Walton", "title": "Violin Concerto", "soloists": "Fenella Humphreys (violin)"},
       {"composer": "Prokofiev", "title": "Romeo and Juliet (selection)", "soloists": ""}
     ]},
+  {"date": "2020-01-16", "time": "7.30pm", "venue": "St James' Church, Beckenham", "kind": "session", "conductor": "", "note": "Repertoire evening",
+    "works": [
+      {"composer": "Berlioz", "title": "Symphonie fantastique, Op. 14 (movements 1, 2 and 3)", "soloists": ""}
+    ]},
+  {"date": "2020-01-23", "time": "7.30pm", "venue": "St James' Church, Beckenham", "kind": "session", "conductor": "", "note": "Repertoire evening, including a run-through of the Gladiator arrangement ahead of the May concert",
+    "works": [
+      {"composer": "Berlioz", "title": "Symphonie fantastique, Op. 14 (movements 4 and 5)", "soloists": ""},
+      {"composer": "Zimmer", "title": "Gladiator", "soloists": ""}
+    ]},
   {"date": "2020-10-11", "time": "", "venue": "St Michael and All Angels Church, Beckenham", "kind": "session", "conductor": "David Smith", "note": "Covid-era repertoire session",
     "works": [
       {"composer": "Mozart", "title": "The Marriage of Figaro: Overture", "soloists": ""},
@@ -376,7 +390,7 @@ window.SELO_CONCERTS = [
     ]},
   {"date": "2020-12-13", "time": "", "venue": "St Michael and All Angels Church, Beckenham", "kind": "session", "conductor": "David Smith", "note": "Covid-era repertoire session",
     "works": [
-      {"composer": "Mozart", "title": "Piano Concerto No. 20 in D minor, K. 466", "soloists": "Mike Bradburn (piano)"},
+      {"composer": "Mozart", "title": "Piano Concerto No. 20 in D minor, K. 466 (1st movement)", "soloists": "Mike Bradburn (piano)"},
       {"composer": "Coleridge-Taylor", "title": "Christmas Overture", "soloists": ""}
     ]},
   {"date": "2021-06-06", "time": "", "venue": "St Michael and All Angels Church, Beckenham", "kind": "session", "conductor": "Andy Meyers", "note": "Covid-era repertoire session",
@@ -397,6 +411,23 @@ window.SELO_CONCERTS = [
     "works": [
       {"composer": "Brahms", "title": "Variations on a Theme of Haydn", "soloists": ""},
       {"composer": "Dvořák", "title": "Cello Concerto", "soloists": "Yoanna Prodanova (cello)"}
+    ]},
+  {"date": "2021-11-18", "time": "7.30pm", "venue": "Jubilee Halls, Christ Church, Beckenham", "kind": "session", "conductor": "", "note": "Repertoire evening",
+    "works": [
+      {"composer": "Schumann", "title": "Symphony No. 4 in D minor, Op. 120", "soloists": ""}
+    ]},
+  {"date": "2021-11-25", "time": "7.30pm", "venue": "Jubilee Halls, Christ Church, Beckenham", "kind": "session", "conductor": "", "note": "Repertoire evening",
+    "works": [
+      {"composer": "Dvořák", "title": "Symphony No. 7 in D minor", "soloists": ""}
+    ]},
+  {"date": "2021-12-02", "time": "7.30pm", "venue": "Jubilee Halls, Christ Church, Beckenham", "kind": "session", "conductor": "", "note": "Repertoire evening, finishing early for a Christmas drink",
+    "works": [
+      {"composer": "Dvořák", "title": "Symphony No. 7 in D minor", "soloists": ""}
+    ]},
+  {"date": "2022-01-27", "time": "7.30pm", "venue": "Jubilee Halls, Christ Church, Beckenham", "kind": "session", "conductor": "", "note": "Repertoire evenings on 27 January and 3 February 2022",
+    "works": [
+      {"composer": "Tchaikovsky", "title": "Symphony No. 1 in G minor, 'Winter Daydreams'", "soloists": ""},
+      {"composer": "J. Strauss II", "title": "Die Fledermaus: Overture", "soloists": ""}
     ]},
   {"date": "2022-04-10", "time": "4.00pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "David Smith", "note": "",
     "works": [
@@ -456,6 +487,10 @@ window.SELO_CONCERTS = [
       {"composer": "Ponchielli", "title": "Il Convegno", "soloists": "Charlotte Woolley, Phil Broadey (clarinets)"},
       {"composer": "Bryan Kelly", "title": "Improvisations on Christmas Carols", "soloists": ""}
     ]},
+  {"date": "2024-01-25", "time": "7.30pm", "venue": "Beckenham Methodist Church, Beckenham", "kind": "session", "conductor": "", "note": "Repertoire evenings on 25 January and 1 February 2024",
+    "works": [
+      {"composer": "Holst", "title": "The Planets", "soloists": ""}
+    ]},
   {"date": "2024-03-24", "time": "4.30pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "David Smith", "note": "",
     "works": [
       {"composer": "Holst", "title": "A Somerset Rhapsody", "soloists": ""},
@@ -507,6 +542,10 @@ window.SELO_CONCERTS = [
       {"composer": "Grieg", "title": "Piano Concerto in A minor", "soloists": "Juanjo Blázquez (piano)"},
       {"composer": "Tchaikovsky", "title": "Symphony No. 5 in E minor", "soloists": ""}
     ]},
+  {"date": "2025-06-26", "time": "7.30pm", "venue": "Beckenham Methodist Church, Beckenham", "kind": "session", "conductor": "", "note": "Repertoire evenings on 26 June and 3 July 2025",
+    "works": [
+      {"composer": "Saint-Saëns", "title": "Symphony No. 3 in C minor, 'Organ'", "soloists": ""}
+    ]},
   {"date": "2025-10-11", "time": "4.00pm", "venue": "All Saints Church, West Dulwich", "kind": "concert", "conductor": "David Smith", "note": "",
     "works": [
       {"composer": "Zimmer", "title": "Gladiator", "soloists": ""},
@@ -521,6 +560,10 @@ window.SELO_CONCERTS = [
       {"composer": "Borodin", "title": "Prince Igor: Polovtsian Dances", "soloists": ""},
       {"composer": "Kabalevsky", "title": "Cello Concerto No. 2", "soloists": "Yoanna Prodanova (cello)"},
       {"composer": "Mussorgsky (orch. Ravel)", "title": "Pictures at an Exhibition", "soloists": ""}
+    ]},
+  {"date": "2026-01-22", "time": "7.30pm", "venue": "", "kind": "session", "conductor": "", "note": "Repertoire evenings on 22 and 29 January 2026",
+    "works": [
+      {"composer": "Rachmaninov", "title": "Symphonic Dances", "soloists": ""}
     ]},
   {"date": "2026-03-22", "time": "4.30pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "David Smith", "note": "",
     "works": [
@@ -539,6 +582,12 @@ window.SELO_CONCERTS = [
     "works": [
       {"composer": "Elgar", "title": "The Music Makers", "soloists": "Jessica Gillingwater (mezzo-soprano)"},
       {"composer": "Vaughan Williams", "title": "A London Symphony", "soloists": ""}
+    ]},
+  {"date": "2026-10-11", "time": "4.30pm", "venue": "St Michael and All Angels Church, Beckenham", "kind": "concert", "conductor": "Alex Robinson", "note": "",
+    "works": [
+      {"composer": "Brahms", "title": "Tragic Overture", "soloists": ""},
+      {"composer": "Grieg", "title": "In Autumn", "soloists": ""},
+      {"composer": "Tchaikovsky", "title": "Symphony No. 4 in F minor", "soloists": ""}
     ]}
 ];
 // ===== END OF CONCERT DATA =====
@@ -554,7 +603,7 @@ const fmt = d => { const [y,m,dd] = d.split('-').map(Number); return `${dd} ${MO
 const fmtLong = d => { const [y,m,dd] = d.split('-').map(Number); const w = new Date(Date.UTC(y,m-1,dd)).getUTCDay(); return `${DAYS[w]} ${dd} ${MONTHS[m-1]} ${y}`; };
 const seasonOf = d => { const [y,m] = d.split('-').map(Number); const s = m >= 8 ? y : y-1; return `${s}–${String(s+1).slice(2)}`; };
 const norm = s => (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[‘’']/g,"'").replace(/\s+/g,' ').trim();
-const shortVenue = v => v.replace(/ Church\b/g,'').replace(/^St Michael and All Angels/,'St Michael’s');
+const shortVenue = v => v.replace(/^(St [^,]*?|All Saints) Church\b/,'$1').replace(/^St Michael and All Angels/,'St Michael’s');
 function surnameFirst(c){
   if (/[\/,]/.test(c)) return c;
   const m = c.match(/^(.*?)(\s*\(.*\))?$/); const tail = m[2] || '';
