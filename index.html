@@ -1,100 +1,119 @@
 <!doctype html>
 <html lang="en-GB">
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#411741">
-<link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="apple-mobile-web-app-title" content="SELO Rep">
-<meta name="apple-mobile-web-app-capable" content="yes">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>SELO Repertoire Archive</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#3b0f43">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="SELO Rep">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <style>
-/* Layout: a programme-book index — slim masthead, one search bar, two views (by work / by concert) in a single 60rem column */
+/* Styled to match southeastlondonorchestra.com: Arial, light grey page, white bordered panels,
+   white header bar with the SELO logo, purple navigation colour, mint/teal headings, dark footer */
 :root{
-  --bg:#f5f6f8; --surface:#ffffff; --fg:#1a2030; --muted:#5d6577; --line:#d9dde5;
-  --accent:#1f5f6b; --accent-soft:#e2eef0; --brass:#9a6b1f; --session:#7a5aa0; --session-soft:#efe9f6;
-  --danger:#a33a2c;
-  --f-display:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  --f-mono:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --page:#efefef;        /* website page background */
+  --panel:#ffffff;       /* content panels */
+  --text:#3a3a3a;        /* website body text */
+  --muted:#6b6b6b;
+  --line:#d8d8d8;        /* website panel border */
+  --purple:#3b0f43;      /* website menu and SELO lettering */
+  --purple-soft:#f1e9f2;
+  --teal:#4f9aa1;        /* website links */
+  --mint:#8bc5b9;        /* website headings */
+  --mint-soft:#e8f4f1;
+  --plum:#8a2f5c;        /* logo's third bar, used for repertoire sessions */
+  --plum-soft:#f6eaf0;
+  --footer:#222222;
+  --font:Arial,Helvetica,sans-serif;
+  color-scheme:light;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#12161f; --surface:#1a202c; --fg:#e7eaf0; --muted:#9aa3b5; --line:#2c3443;
-  --accent:#6fb8c4; --accent-soft:#1d3238; --brass:#d6a75a; --session:#b89ddb; --session-soft:#2a2238; --danger:#e07a6b; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#12161f; --surface:#1a202c; --fg:#e7eaf0; --muted:#9aa3b5; --line:#2c3443;
-  --accent:#6fb8c4; --accent-soft:#1d3238; --brass:#d6a75a; --session:#b89ddb; --session-soft:#2a2238; --danger:#e07a6b; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--f-body);padding-inline:16px;padding-block:0 48px}
-.wrap{max-width:60rem;margin:0 auto}
-header.mast{padding-block:32px 20px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between}
-.eyebrow{font:500 12px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--brass);margin:0 0 8px}
-h1{font:700 clamp(30px,6vw,44px)/1.05 var(--f-display);margin:0;text-wrap:balance}
-.stats{display:flex;gap:20px;flex-wrap:wrap;font:400 13px/1.3 var(--f-mono);color:var(--muted)}
-.stats b{display:block;font:700 22px/1.1 var(--f-display);color:var(--fg)}
-.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px;display:grid;gap:10px;border-bottom:1px solid var(--line)}
+body{background:var(--page);color:var(--text);font:400 16px/1.55 var(--font);margin:0}
+
+/* Header bar, as on the website */
+.sitebar{background:var(--panel);border-bottom:1px solid var(--line);padding-inline:16px}
+.sitebar-in{max-width:60rem;margin:0 auto;display:flex;align-items:center;gap:16px;padding-block:10px;flex-wrap:wrap}
+.sitebar img{height:64px;width:auto;display:block}
+.sitebar .titles{display:grid;gap:2px;min-width:0}
+.sitebar .org{font:700 12px/1.2 var(--font);letter-spacing:.06em;text-transform:uppercase;color:var(--purple)}
+.sitebar h1{font:700 clamp(22px,4.5vw,30px)/1.15 var(--font);color:var(--purple);margin:0}
+.sitebar .back{margin-left:auto;font:700 13px/1 var(--font);letter-spacing:.04em;text-transform:uppercase;color:var(--purple);text-decoration:none;padding:8px 0}
+.sitebar .back:hover{color:var(--teal)}
+
+.wrap{max-width:62rem;margin:0 auto;padding-inline:16px;padding-block:20px 40px}
+.stats{display:flex;gap:24px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);padding:14px 20px;margin-bottom:16px;font-size:14px;color:var(--muted)}
+.stats b{display:block;font:700 24px/1.1 var(--font);color:var(--purple)}
+
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border:1px solid var(--line);padding:14px 16px;display:grid;gap:10px}
 .searchrow{display:flex;gap:8px;flex-wrap:wrap}
-#q{flex:1 1 260px;min-width:0;font:inherit;font-size:17px;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)}
-#q:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#q{flex:1 1 260px;min-width:0;font:inherit;font-size:17px;padding:10px 12px;border:1px solid var(--line);border-radius:0;background:#fff;color:var(--text)}
+#q:focus-visible,button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
 .bar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between}
-.tabs{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.tabs button{font:600 14px var(--f-body);padding:7px 14px;border:0;background:var(--surface);color:var(--muted);cursor:pointer}
-.tabs button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+.tabs{display:inline-flex;border:1px solid var(--purple)}
+.tabs button{font:700 13px var(--font);letter-spacing:.05em;text-transform:uppercase;padding:8px 14px;border:0;background:#fff;color:var(--purple);cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--purple);color:#fff}
 label.chk{display:inline-flex;gap:6px;align-items:center;font-size:14px;color:var(--muted);cursor:pointer}
-.btn{font:600 14px var(--f-body);padding:8px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:var(--bg);cursor:pointer}
-.btn.ghost{background:transparent;color:var(--accent)}
-.btn.danger{border-color:var(--danger);background:transparent;color:var(--danger)}
-.btn.small{padding:4px 10px;font-size:13px}
-.result-note{font-size:14px;color:var(--muted);margin:16px 0 4px}
+label.chk input{accent-color:var(--purple)}
+
+main#out{background:var(--panel);border:1px solid var(--line);border-top:0;padding:8px 24px 24px}
+.result-note{font-size:14px;color:var(--muted);margin:12px 0 4px}
 .status{padding:40px 0;color:var(--muted);text-align:center}
 
-/* Works view */
-.composer{padding-block:18px 6px;border-bottom:1px solid var(--line)}
-.composer h2{font:700 22px/1.2 var(--f-display);margin:0 0 6px}
+/* By composer */
+.composer{padding-block:18px 8px;border-bottom:1px solid var(--line)}
+.composer:last-child{border-bottom:0}
+.composer h2{font:700 21px/1.25 var(--font);color:var(--purple);margin:0 0 6px}
 .work{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:8px 0;align-items:baseline}
 .work + .work{border-top:1px dashed var(--line)}
 .work .t{min-width:0}
-.work .count{font:500 12px var(--f-mono);color:var(--muted);white-space:nowrap}
+.work .count{font-size:13px;color:var(--muted);white-space:nowrap}
 .dates{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
-.chip{font:500 12.5px/1 var(--f-mono);padding:5px 8px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;font-variant-numeric:tabular-nums}
-.chip:hover{border-color:var(--accent);color:var(--accent)}
-.chip .v{font:400 12.5px/1 var(--f-body);color:var(--muted)}
+.chip{font:400 13px/1.2 var(--font);padding:5px 9px;border-radius:999px;border:1px solid var(--mint);background:var(--mint-soft);color:var(--text);cursor:pointer;font-variant-numeric:tabular-nums}
+.chip:hover{border-color:var(--teal);background:#fff;color:var(--teal)}
+.chip .v{color:var(--muted)}
+.chip.session{background:var(--plum-soft);border-color:#e3c3d3;color:var(--plum)}
 .chip.session .v{color:inherit;opacity:.85}
-.chip.session{background:var(--session-soft);border-color:transparent;color:var(--session)}
 .solo{font-size:14px;color:var(--muted)}
 
-/* Concerts view */
-.season h2{font:700 20px/1.2 var(--f-display);margin:28px 0 10px;display:flex;gap:10px;align-items:baseline}
-.season h2 small{font:400 12px var(--f-mono);color:var(--muted)}
-.concert{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px;scroll-margin-top:150px}
-.concert.flash{outline:2px solid var(--brass)}
+/* By concert */
+.season h2{font:400 26px/1.2 var(--font);color:var(--mint);margin:28px 0 12px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.season h2 small{font-size:13px;color:var(--muted)}
+.concert{background:#fff;border:1px solid var(--line);padding:16px 20px;margin-bottom:12px;scroll-margin-top:170px}
+.concert.flash{outline:2px solid var(--purple)}
 .chead{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;justify-content:space-between}
-.when{font:500 14px var(--f-mono);font-variant-numeric:tabular-nums}
-.where{font-size:14px;color:var(--muted)}
-.tag{font:600 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:4px 7px;border-radius:4px;background:var(--session-soft);color:var(--session)}
-.concert ol{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:4px}
+.when{font:400 20px/1.3 var(--font);color:var(--teal);font-variant-numeric:tabular-nums}
+.where{font-size:15px;color:var(--teal);margin-top:2px}
+.tag{font:700 11px/1 var(--font);letter-spacing:.08em;text-transform:uppercase;padding:5px 8px;background:var(--plum-soft);color:var(--plum)}
+.concert ol{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:4px}
 .concert li{display:grid;grid-template-columns:minmax(7rem,12rem) minmax(0,1fr);gap:12px}
-.concert li .c{font-weight:600}
-.note{margin:10px 0 0;font-size:13.5px;color:var(--brass)}
-.cfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
-mark{background:var(--accent-soft);color:inherit;border-radius:2px;padding:0 1px}
-@media (max-width:520px){.concert li{grid-template-columns:1fr;gap:0}.concert li + li{margin-top:6px}}
+.concert li .c{font-weight:700;color:var(--purple)}
+.note{margin:10px 0 0;font-size:14px;color:var(--muted);font-style:italic}
+mark{background:var(--mint-soft);color:inherit;box-shadow:0 0 0 1px var(--mint);padding:0 1px}
+@media (max-width:520px){main#out{padding-inline:14px}.concert{padding:14px}.concert li{grid-template-columns:1fr;gap:0}.concert li + li{margin-top:6px}.sitebar img{height:52px}.sitebar .back{display:none}}
 
+.sitefoot{background:var(--footer);color:#fff;padding:20px 16px;font-size:14px;text-align:center}
+.sitefoot a{color:var(--mint)}
 @media (prefers-reduced-motion:no-preference){.concert.flash{transition:outline-color .6s}}
 </style>
 </head>
 <body>
 
-<div class="wrap">
-  <header class="mast">
-    <div>
-      <p class="eyebrow">South East London Orchestra</p>
+<header class="sitebar">
+  <div class="sitebar-in">
+    <img src="data:image/png;base64,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" alt="SELO">
+    <div class="titles">
+      <span class="org">South East London Orchestra</span>
       <h1>Repertoire Archive</h1>
     </div>
-    <div class="stats" id="stats" aria-live="polite"></div>
-  </header>
+    <a class="back" href="https://southeastlondonorchestra.com/">SELO website</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="stats" id="stats" aria-live="polite"></div>
 
   <div class="controls">
     <div class="searchrow">
@@ -112,6 +131,7 @@ mark{background:var(--accent-soft);color:inherit;border-radius:2px;padding:0 1px
   <main id="out"><p class="status">Loading the archive…</p></main>
 </div>
 
+<footer class="sitefoot">South East London Orchestra · <a href="https://southeastlondonorchestra.com/">southeastlondonorchestra.com</a></footer>
 
 <script>
 // ===== CONCERT DATA: edit below to add or correct concerts =====
